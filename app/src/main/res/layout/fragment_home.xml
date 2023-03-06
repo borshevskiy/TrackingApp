@@ -1,13 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.HomeFragment">
 
-    <TextView
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="HOME" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
-</FrameLayout>
+    </org.osmdroid.views.MapView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_my_location"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_start"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton" />
+
+    <TextView
+        android:id="@+id/durationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#9ABFBFBF"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="Time 00:00:09"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/averageSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#9ABFBFBF"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="Average Speed: 3.5 km/h"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="@+id/durationTime"
+        app:layout_constraintTop_toBottomOf="@+id/durationTime" />
+
+    <TextView
+        android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#9ABFBFBF"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="Speed: 3.5 km/h"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="@+id/averageSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/averageSpeed" />
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#9ABFBFBF"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="Distance: 16.5 km"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/speed"
+        app:layout_constraintTop_toBottomOf="@+id/speed" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
