@@ -15,11 +15,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
-
     </org.osmdroid.views.MapView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/geoLocationFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -31,18 +30,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/serviceFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:src="@drawable/ic_start"
         app:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton"
-        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton" />
+        app:layout_constraintEnd_toEndOf="@+id/geoLocationFab"
+        app:layout_constraintTop_toBottomOf="@+id/geoLocationFab" />
 
     <TextView
-        android:id="@+id/durationTime"
+        android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -50,9 +49,21 @@
         android:background="#9ABFBFBF"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:text="Time 00:00:09"
+        android:text="Time "
         android:textColor="#000000"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/durationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#9ABFBFBF"
+        android:paddingEnd="5dp"
+        android:text="00:00:00"
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@+id/time"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -65,8 +76,8 @@
         android:paddingEnd="5dp"
         android:text="Average Speed: 3.5 km/h"
         android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="@+id/durationTime"
-        app:layout_constraintTop_toBottomOf="@+id/durationTime" />
+        app:layout_constraintStart_toStartOf="@+id/time"
+        app:layout_constraintTop_toBottomOf="@+id/time" />
 
     <TextView
         android:id="@+id/speed"

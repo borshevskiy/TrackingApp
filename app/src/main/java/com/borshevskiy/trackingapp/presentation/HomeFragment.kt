@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.borshevskiy.trackingapp.R
 import com.borshevskiy.trackingapp.data.LocationService
 import com.borshevskiy.trackingapp.databinding.FragmentHomeBinding
 import com.borshevskiy.trackingapp.presentation.utils.TrackingUtility
@@ -37,9 +38,37 @@ class HomeFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestPermissions()
+        serviceButtonSetup()
+        LocationService.timeInMillis.observe(viewLifecycleOwner) {
+            binding.durationTime.text = com.borshevskiy.trackingapp.presentation.utils.TimeUtils.getTime(it)
+        }
+    }
+
+    private fun serviceButtonSetup() {
+        LocationService.isServiceRunning.observe(viewLifecycleOwner) {
+            with(binding.serviceFab) {
+                if (it) {
+                    setImageResource(R.drawable.ic_stop)
+                    setOnClickListener { stopService() }
+                }
+                else {
+                    setImageResource(R.drawable.ic_start)
+                    setOnClickListener { startService() }
+                }
+            }
+        }
+    }
+
+    private fun stopService() {
+        activity?.stopService(Intent(activity, LocationService::class.java))
+        binding.serviceFab.setImageResource(R.drawable.ic_start)
+    }
+
+    private fun startService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.startForegroundService(Intent(activity, LocationService::class.java))
         } else activity?.startService(Intent(activity, LocationService::class.java))
+        binding.serviceFab.setImageResource(R.drawable.ic_stop)
     }
 
     private fun settingsOSM() {
