@@ -3,6 +3,7 @@ package com.borshevskiy.trackingapp.presentation
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.borshevskiy.trackingapp.R
 import com.borshevskiy.trackingapp.data.LocationService
 import com.borshevskiy.trackingapp.databinding.FragmentHomeBinding
 import com.borshevskiy.trackingapp.presentation.utils.TrackingUtility
 import org.osmdroid.config.Configuration
 import org.osmdroid.library.BuildConfig
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -25,6 +30,9 @@ class HomeFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var routeLine: Polyline? = null
+    private var firstStart = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +47,52 @@ class HomeFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onViewCreated(view, savedInstanceState)
         requestPermissions()
         serviceButtonSetup()
-        LocationService.timeInMillis.observe(viewLifecycleOwner) {
-            binding.durationTime.text = com.borshevskiy.trackingapp.presentation.utils.TimeUtils.getTime(it)
+        with(binding) {
+            geoLocationFab.setOnClickListener {
+                if (routeLine?.actualPoints?.isNotEmpty() == true) {
+                    mapLayout.controller.animateTo(routeLine!!.actualPoints!!.last())
+                }
+            }
+            LocationService.timeInMillis.observe(viewLifecycleOwner) { durationTime.text = it }
+            LocationService.location.observe(viewLifecycleOwner) {
+                speed.text = "Speed: ${String.format("%.1f", 3.6f * it.speed)} km/h"
+                averageSpeed.text = "Average Speed: ${String.format("%.1f", 3.6f * it.avgSpeed)} km/h"
+                distance.text = "Distance: ${String.format("%.3f", it.distance/1000)} km"
+                fillRouteLine(it.geoPointsList)
+                setRouteMarkers(it.geoPointsList)
+            }
+        }
+    }
+
+    override fun onStop() {
+        firstStart = true
+        super.onStop()
+    }
+
+    private fun fillRouteLine(list: List<GeoPoint>) {
+        if (list.isNotEmpty()) {
+            if (list.size > 1 && firstStart) {
+                routeLine?.actualPoints?.clear()
+                list.forEach { routeLine?.addPoint(it) }
+                firstStart = false
+            } else routeLine?.addPoint(list[list.size - 1])
+        }
+    }
+
+    private fun setRouteMarkers(list: List<GeoPoint>) = with(binding) {
+        if (list.isNotEmpty()) {
+            val startMarker = Marker(mapLayout)
+            val endMarker = Marker(mapLayout)
+            startMarker.apply {
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                position = list[0]
+                mapLayout.overlays.add(this)
+            }
+            endMarker.apply {
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                position = list[list.size - 1]
+                mapLayout.overlays.add(this)
+            }
         }
     }
 
@@ -78,14 +130,19 @@ class HomeFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun initOSM() = with(binding) {
-        mapLayout.controller.setZoom(20.0)
-        MyLocationNewOverlay(GpsMyLocationProvider(activity), mapLayout).apply {
+    private fun initOSM() = with(binding.mapLayout) {
+        routeLine = Polyline()
+        routeLine?.outlinePaint?.color = Color.parseColor(
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("color_key", "#FF009EDA")
+        )
+        controller.setZoom(20.0)
+        MyLocationNewOverlay(GpsMyLocationProvider(activity), this).apply {
             enableMyLocation()
             enableFollowLocation()
             runOnFirstFix {
-                mapLayout.overlays.clear()
-                mapLayout.overlays.add(this)
+                overlays.clear()
+                overlays.add(this)
+                overlays.add(routeLine)
             }
         }
     }
